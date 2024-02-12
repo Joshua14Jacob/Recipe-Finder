@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>Recipe Finder Home</h1>
+    <p>Welcome to Recipe Finder! This is a simple web application that allows you to search for recipes based on the ingredients you have at home. You can also save your favorite recipes and add your own recipes to the database. Enjoy!</p>
+
+    {% for recipe in recipes %}
+    <h2>{{ recipe.title }}</h2>
+    <p>{{ recipe.picture }}</p>
+    <p>Ingredients:</p>
+    <ul>
+        {% for ingredient in recipe.ingredients %}
+        <li>{{ ingredient }}</li>
+        {% endfor %}
+    </ul>
+    <p>Instructions:</p>
+    <ol>
+        {% for instruction in recipe.instructions %}
+        <li>{{ instruction }}</li>
+        {% endfor %}
+    </ol>
+    {% endfor %}
+</body>
+</html>
