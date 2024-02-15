@@ -1,65 +1,31 @@
 from django.shortcuts import render, HttpResponse
+from django.contrib.auth.forms import UserCreationForm
+import requests
+from recipes_finder.forms import InputForm
 
-recipes = [
-    {
-        'title': 'Pasta Carbonara',
-        'picture': 'pasta_carbonara.jpg',
-        'ingredients': [
-            'Spaghetti',
-            'Eggs',
-            'Bacon',
-            'Parmesan',
-            'Pepper'
-        ],
-        'instructions': [
-            'Boil the spaghetti',
-            'Fry the bacon',
-            'Mix the eggs and parmesan',
-            'Mix everything together'
-        ]
-    },
-    {
-        'title': 'Pasta Bolognese',
-        'picture': 'pasta_bolognese.jpg',
-        'ingredients': [
-            'Spaghetti',
-            'Beef',
-            'Tomato sauce',
-            'Onion',
-            'Garlic'
-        ],
-        'instructions': [
-            'Boil the spaghetti',
-            'Fry the beef',
-            'Fry the onion and garlic',
-            'Mix everything together'
-        ]
-    },
-    {
-        'title': 'Pasta Pesto',
-        'picture': 'pasta_pesto.jpg',
-        'ingredients': [
-            'Spaghetti',
-            'Basil',
-            'Pine nuts',
-            'Parmesan',
-            'Garlic'
-        ],
-        'instructions': [
-            'Boil the spaghetti',
-            'Blend the basil, pine nuts, parmesan, and garlic',
-            'Mix everything together'
-        ]
-    }
-]
 
 # Create your views here.
 def home(request):
-    context = {
-        'recipes': recipes
-    }
+    if request.method == 'POST':
+        form = InputForm(request.POST)
+        if form.is_valid():
+            user_input = form.cleaned_data['user_input']
 
-    return render(request, 'recipes_finder/home.html', context)
+            try:
+                response = requests.get('https://api.edamam.com/search', params={'q': user_input, 'app_id': '17d883af', 'app_key': '91f71924206bd50b299d417b819a84eb'})
+                response.raise_for_status()  # Raise exception for HTTP errors
+                data = response.json()
+                return render(request, 'recipes_finder/home.html', {'form': form, 'data': data})
+            except requests.RequestException as e:
+                # Handle request exceptions (e.g., network errors, API changes)
+                return HttpResponse("An error occurred: {}".format(e))
+        else:
+            # Form is not valid, render form with validation errors
+            return render(request, 'recipes_finder/home.html', {'form': form})
+    else:
+        form = InputForm()
+    return render(request, 'recipes_finder/home.html', {'form': form})
+
 
 def about(request):
     return render(request, 'recipes_finder/about.html')
