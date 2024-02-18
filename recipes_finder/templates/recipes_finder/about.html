@@ -4,9 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>About</title>
 </head>
 <body>
-    <h1>About Recipe Finder</h1>
+    <h1>Fruit🍍-Vegetable🍅 Classification</h1>
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="image" accept="image/*" required>
+        <button type="submit">Upload Image</button>
+    </form>
+    {% if prediction %}
+        <h2>Prediction:</h2>
+        <p>The uploaded image is likely a: {{ prediction }}</p>
+    {% endif %}
 </body>
 </html>
